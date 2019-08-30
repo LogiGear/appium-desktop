@@ -55,7 +55,6 @@ main().catch(console.log);
   }
 
   codeFor_sendKeys (varName, varIndex, text) {
-    
     return `await gondola.enter("${glocator}",${JSON.stringify(text)})`;
   }
 

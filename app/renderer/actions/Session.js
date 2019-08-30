@@ -1,7 +1,6 @@
 import { ipcRenderer } from 'electron';
 import settings from '../../shared/settings';
 import { v4 as UUID } from 'uuid';
-import url from 'url';
 import { push } from 'connected-react-router';
 import { notification } from 'antd';
 import { debounce, toPairs, union, without, keys } from 'lodash';
@@ -165,7 +164,7 @@ export function newSession (caps, attachSessId = null) {
 
     let desiredCapabilities = caps ? getCapsObject(caps) : null;
     let session = getState().session;
-    let host, port, username, accessKey, https, path, token;
+    let host, port, username, accessKey, https, path;
 
     switch (session.serverType) {
       case ServerTypes.local:

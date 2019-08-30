@@ -1,11 +1,11 @@
 import React, { Suspense } from 'react';
 import { Switch, Route } from 'react-router';
 import App from './containers/App';
-import StartServerPage from './containers/StartServerPage';
-import ServerMonitorPage from './containers/ServerMonitorPage';
-import SessionPage from './containers/SessionPage';
+//import StartServerPage from './containers/StartServerPage';
+//import ServerMonitorPage from './containers/ServerMonitorPage';
+//import SessionPage from './containers/SessionPage';
 import InspectorPage from './containers/InspectorPage';
-import ConfigPage from './containers/ConfigPage';
+//import ConfigPage from './containers/ConfigPage';
 import Spinner from './components/Spinner/Spinner';
 import { ipcRenderer } from 'electron';
 import i18n from '../configs/i18next.config.renderer';
@@ -21,7 +21,6 @@ export default () => (
     <App>
       <Switch>
         <Route exact path="/" component={InspectorPage} />
-        
       </Switch>
     </App>
   </Suspense>

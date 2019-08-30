@@ -1,6 +1,5 @@
 import { ipcRenderer } from 'electron';
 import { notification } from 'antd';
-import { push } from 'connected-react-router';
 import _ from 'lodash';
 import B from 'bluebird';
 import { getLocators } from '../components/Inspector/shared';
@@ -138,7 +137,7 @@ function xmlToJSON (source) {
   return recursive(sourceXML);
 }
 
-export function initializeSession() {
+export function initializeSession () {
   return (dispatch, getState) => {
     // Listen for session response messages from 'main'
     let caps = [];
@@ -147,36 +146,36 @@ export function initializeSession() {
     let automation = {};
     let appPackage = {};
     let appActivity = {};
-    platform.name = "platformName";
-    platform.type = "text";
-    platform.value = "Android";
+    platform.name = 'platformName';
+    platform.type = 'text';
+    platform.value = 'Android';
     caps.push(platform);
 
-    device.name = "deviceName";
-    device.type = "text";
-    device.value = "emulator-5554";
+    device.name = 'deviceName';
+    device.type = 'text';
+    device.value = 'emulator-5554';
     caps.push(device);
 
-    automation.name = "automationName";
-    automation.type = "text";
-    automation.value = "UiAutomator2";
+    automation.name = 'automationName';
+    automation.type = 'text';
+    automation.value = 'UiAutomator2';
     caps.push(automation);
 
-    appPackage.name = "appPackage";
-    appPackage.type = "text";
-    appPackage.value = "com.android.settings";
+    appPackage.name = 'appPackage';
+    appPackage.type = 'text';
+    appPackage.value = 'com.android.settings';
     caps.push(appPackage);
 
-    appActivity.name = "appActivity";
-    appActivity.type = "text";
-    appActivity.value = "Settings";
+    appActivity.name = 'appActivity';
+    appActivity.type = 'text';
+    appActivity.value = 'Settings';
     caps.push(appActivity);
 
     dispatch({type: NEW_SESSION_REQUESTED, caps});
     let desiredCapabilities = caps ? getCapsObject(caps) : null;
     let attachSessId = null;
     let session = getState().session;
-    let host, port, username, accessKey, https, path, token;
+    let host, port, username, accessKey, https, path;
 
     switch (session.serverType) {
       case ServerTypes.local:
