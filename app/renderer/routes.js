@@ -20,11 +20,8 @@ export default () => (
   <Suspense fallback={<Spinner />}>
     <App>
       <Switch>
-        <Route exact path="/" component={StartServerPage} />
-        <Route path="/monitor" component={ServerMonitorPage} />
-        <Route path="/session" component={SessionPage} />
-        <Route path="/inspector" component={InspectorPage} />
-        <Route path="/config" component={ConfigPage} />
+        <Route exact path="/" component={InspectorPage} />
+        
       </Switch>
     </App>
   </Suspense>

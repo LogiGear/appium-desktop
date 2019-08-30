@@ -13,9 +13,10 @@
         },
         "env": {
           "RUNNING_LOCALLY": "true",
-          "FORCE_NO_WRONG_FOLDER": "true"
+          "FORCE_NO_WRONG_FOLDER": "true",
+          "NODE_ENV": "development"
         },
-        "args": ["."]
+        "args": ["--inspect", "."]
       },
       {
         "name": "Mocha current file",

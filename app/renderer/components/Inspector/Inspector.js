@@ -61,6 +61,10 @@ export default class Inspector extends Component {
     }
   }
 
+  componentWillMount () {
+    this.props.initializeSession();
+  }
+
   componentDidMount () {
     const curHeight = window.innerHeight;
     const curWidth = window.innerWidth;

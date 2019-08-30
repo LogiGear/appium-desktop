@@ -67,6 +67,34 @@ export const ENTERING_ACTION_ARGS = 'ENTERING_ACTION_ARGS';
 export const REMOVE_ACTION = 'REMOVE_ACTION';
 export const SET_ACTION_ARG = 'SET_ACTION_ARG';
 
+const serverTypes = {};
+serverTypes.local = 'local';
+serverTypes.remote = 'remote';
+
+export const ServerTypes = serverTypes;
+
+const JSON_TYPES = ['object', 'number', 'boolean'];
+export function getCapsObject (caps) {
+  return Object.assign({}, ...(caps.map((cap) => {
+    if (JSON_TYPES.indexOf(cap.type) !== -1) {
+      try {
+        let obj = JSON.parse(cap.value);
+        return {[cap.name]: obj};
+      } catch (ign) {}
+    }
+    return {[cap.name]: cap.value};
+  })));
+}
+
+function removeNewSessionListeners () {
+  ipcRenderer.removeAllListeners('appium-new-session-failed');
+  ipcRenderer.removeAllListeners('appium-new-session-ready');
+}
+
+export const NEW_SESSION_REQUESTED = 'NEW_SESSION_REQUESTED';
+export const SESSION_LOADING = 'SESSION_LOADING';
+export const SESSION_LOADING_DONE = 'SESSION_LOADING_DONE';
+export const SESSION_SERVER_PARAMS = 'SESSION_SERVER_PARAMS';
 
 // Attributes on nodes that we know are unique to the node
 const uniqueAttributes = [
@@ -110,12 +138,116 @@ function xmlToJSON (source) {
   return recursive(sourceXML);
 }
 
+export function initializeSession() {
+  return (dispatch, getState) => {
+    // Listen for session response messages from 'main'
+    let caps = [];
+    let platform = {};
+    let device = {};
+    let automation = {};
+    let appPackage = {};
+    let appActivity = {};
+    platform.name = "platformName";
+    platform.type = "text";
+    platform.value = "Android";
+    caps.push(platform);
+
+    device.name = "deviceName";
+    device.type = "text";
+    device.value = "emulator-5554";
+    caps.push(device);
+
+    automation.name = "automationName";
+    automation.type = "text";
+    automation.value = "UiAutomator2";
+    caps.push(automation);
+
+    appPackage.name = "appPackage";
+    appPackage.type = "text";
+    appPackage.value = "com.android.settings";
+    caps.push(appPackage);
+
+    appActivity.name = "appActivity";
+    appActivity.type = "text";
+    appActivity.value = "Settings";
+    caps.push(appActivity);
+
+    dispatch({type: NEW_SESSION_REQUESTED, caps});
+    let desiredCapabilities = caps ? getCapsObject(caps) : null;
+    let attachSessId = null;
+    let session = getState().session;
+    let host, port, username, accessKey, https, path, token;
+
+    switch (session.serverType) {
+      case ServerTypes.local:
+        host = session.server.remote.hostname || '127.0.0.1';
+        port = session.server.remote.port || 4723;
+        path = session.server.remote.path;
+        https = session.server.remote.ssl;
+        break;
+      case ServerTypes.remote:
+        host = session.server.remote.hostname || '127.0.0.1';
+        port = session.server.remote.port || 4723;
+        path = session.server.remote.path;
+        https = session.server.remote.ssl;
+        break;
+      default:
+        break;
+    }
+
+    let rejectUnauthorized = !session.server.advanced.allowUnauthorized;
+    let proxy;
+    if (session.server.advanced.useProxy && session.server.advanced.proxy) {
+      proxy = session.server.advanced.proxy;
+    }
+
+    // Start the session
+    ipcRenderer.send('appium-create-new-session', {
+      desiredCapabilities,
+      attachSessId,
+      host,
+      port,
+      path,
+      username,
+      accessKey,
+      https,
+      rejectUnauthorized,
+      proxy,
+    });
+
+    dispatch({type: SESSION_LOADING});
+
+    // If it failed, show an alert saying it failed
+    ipcRenderer.once('appium-new-session-failed', (evt, e) => {
+      dispatch({type: SESSION_LOADING_DONE});
+      removeNewSessionListeners();
+      showError(e, 0);
+    });
+
+    ipcRenderer.once('appium-new-session-ready', () => {
+      dispatch({type: SESSION_LOADING_DONE});
+
+      // pass some state to the inspector that it needs to build recorder
+      // code boilerplate
+      setSessionDetails({
+        desiredCapabilities,
+        host,
+        port,
+        path,
+        username,
+        accessKey,
+        https,
+      })(dispatch);
+      removeNewSessionListeners();
+    });
+    // Save the current server settings
+    settings.set(SESSION_SERVER_PARAMS, session.server);
+  };
+}
 
 export function bindAppium () {
   return (dispatch) => {
-    // Listen for session response messages from 'main'
     bindClient();
-
     // If user is inactive ask if they wish to keep session alive
     ipcRenderer.on('appium-prompt-keep-alive', () => {
       promptKeepAlive()(dispatch);
@@ -127,7 +259,7 @@ export function bindAppium () {
       ipcRenderer.removeAllListeners('appium-prompt-keep-alive');
       unbindClient();
       dispatch({type: QUIT_SESSION_DONE});
-      dispatch(push('/session'));
+      //dispatch(push('/session'));
       if (!killedByUser) {
         notification.error({
           message: 'Error',
