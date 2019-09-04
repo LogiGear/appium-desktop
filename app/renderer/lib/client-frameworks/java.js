@@ -100,6 +100,10 @@ ${this.indent(code, 4)}
     return `${this.getVarName(varName, varIndex)}.sendKeys(${JSON.stringify(text)});`;
   }
 
+  codeFor_check (varName, varIndex, text) {
+    return `${this.getVarName(varName, varIndex)}.check(${JSON.stringify(text)});`;
+  }
+
   codeFor_back () {
     return `driver.navigate().back();`;
   }

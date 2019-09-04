@@ -194,4 +194,4 @@
 * Can use SauceLabs, TestObject or any other arbitrary remote server to run Appium sessions
 * Has an inspector window that allows the user to look at a screenshot and source of a running session
 * Can select elements in the source and inspect their attributes
-* Can call tap and sendKeys on elements
+* Can call tap and sendKeys/check on elements

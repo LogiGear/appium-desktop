@@ -25,6 +25,10 @@ export const SELECT_HOVERED_ELEMENT = 'SELECT_HOVERED_ELEMENT';
 export const UNSELECT_HOVERED_ELEMENT = 'UNSELECT_HOVERED_ELEMENT';
 export const SHOW_SEND_KEYS_MODAL = 'SHOW_SEND_KEYS_MODAL';
 export const HIDE_SEND_KEYS_MODAL = 'HIDE_SEND_KEYS_MODAL';
+
+export const SHOW_CHECK_MODAL = 'SHOW_CHECK_MODAL';
+export const HIDE_CHECK_MODAL = 'HIDE_CHECK_MODAL';
+
 export const QUIT_SESSION_REQUESTED = 'QUIT_SESSION_REQUESTED';
 export const QUIT_SESSION_DONE = 'QUIT_SESSION_DONE';
 
@@ -400,6 +404,18 @@ export function showSendKeysModal () {
 export function hideSendKeysModal () {
   return (dispatch) => {
     dispatch({type: HIDE_SEND_KEYS_MODAL});
+  };
+}
+
+export function showCheckModal () {
+  return (dispatch) => {
+    dispatch({type: SHOW_CHECK_MODAL});
+  };
+}
+
+export function hideCheckModal () {
+  return (dispatch) => {
+    dispatch({type: HIDE_CHECK_MODAL});
   };
 }
 

@@ -81,6 +81,15 @@ class LocatedElements extends Component {
               {t('Send Keys')}
             </Button>
           </div>
+          <div className={InspectorStyles['check-container']}>
+            <Input size='small' placeholder={t('check')} onChange={(e) => this.setState({...this.state, check: e.target.value})}/>
+            <Button size='small'
+              disabled={!locatorTestElement}
+              onClick={() => applyClientMethod({methodName: 'check', elementId: locatorTestElement, args: [this.state.check || '']})}
+            >
+              {t('Check')}
+            </Button>
+          </div>
         </div>}
       </Col>
     </Row>;

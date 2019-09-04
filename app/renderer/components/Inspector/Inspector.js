@@ -16,8 +16,8 @@ const { TabPane } = Tabs;
 
 const ButtonGroup = Button.Group;
 
-const MIN_WIDTH = 1080;
-const MIN_HEIGHT = 570;
+const MIN_WIDTH = 2000;
+const MIN_HEIGHT = 1000;
 const MAX_SCREENSHOT_WIDTH = 500;
 
 export default class Inspector extends Component {

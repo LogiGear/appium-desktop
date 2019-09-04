@@ -2,12 +2,14 @@ import React, { Component } from 'react';
 import _ from 'lodash';
 import { getLocators } from './shared';
 import styles from './Inspector.css';
-import { Button, Row, Col, Input, Modal, Table, Alert, Tooltip } from 'antd';
+import { Button, Row, Col, Input, Modal, Table, Alert, Tooltip, Select } from 'antd';
 import { withTranslation } from '../../util';
 import { clipboard } from 'electron';
 
 const ButtonGroup = Button.Group;
-
+const checkActions = ['Check Control Exist', 'Check Control Property'];
+const propertyName = 'Property Name';
+const propertyValue = 'Property Value';
 /**
  * Shows details of the currently selected element and shows methods that can
  * be called on the elements (tap, sendKeys)
@@ -17,12 +19,40 @@ class SelectedElement extends Component {
   constructor (props) {
     super(props);
     this.handleSendKeys = this.handleSendKeys.bind(this);
+    this.handleCheck = this.handleCheck.bind(this);
+    this.handleCheckActionChange = this.handleCheckActionChange.bind(this);
+    this.state = {
+      checkAction: checkActions[0],
+      propertyInput: [],
+    };
   }
 
   handleSendKeys () {
     const {sendKeys, applyClientMethod, hideSendKeysModal, selectedElementId: elementId} = this.props;
     applyClientMethod({methodName: 'sendKeys', elementId, args: [sendKeys]});
     hideSendKeysModal();
+  }
+
+  handleCheck () {
+    const {check, applyClientMethod, hideCheckModal, selectedElementId: elementId} = this.props;
+    applyClientMethod({methodName: 'check', elementId, args: [check]});
+    hideCheckModal();
+  }
+
+  handleCheckActionChange (value) {
+    this.setState({
+      checkAction: value
+    });
+
+    if (this.state.checkAction === checkActions[0]) {
+      this.setState({
+        propertyInput: [propertyName, propertyValue],
+      });
+    } else {
+      this.setState({
+        propertyInput: [],
+      });
+    }
   }
 
   render () {
@@ -34,6 +64,9 @@ class SelectedElement extends Component {
       sendKeysModalVisible,
       showSendKeysModal,
       hideSendKeysModal,
+      checkModalVisible,
+      showCheckModal,
+      hideCheckModal,
       selectedElementId: elementId,
       sourceXML,
       elementInteractionsNotAvailable,
@@ -122,6 +155,13 @@ class SelectedElement extends Component {
             </Button>
             <Button
               disabled={!elementId}
+              id='btnCheckElement'
+              onClick={() => showCheckModal()}
+            >
+              {t('Check')}
+            </Button>
+            <Button
+              disabled={!elementId}
               id='btnClearElement'
               onClick={() => applyClientMethod({methodName: 'clear', elementId})}
             >
@@ -171,6 +211,29 @@ class SelectedElement extends Component {
           value={sendKeys}
           onChange={(e) => setFieldValue('sendKeys', e.target.value)}
         />
+      </Modal>
+      <Modal title={t('Check')}
+        visible={checkModalVisible}
+        okText={t('Check')}
+        cancelText={t('Cancel')}
+        onCancel={hideCheckModal}
+        onOk={() => applyClientMethod({methodName: 'check', elementId})}
+      >
+        <Select
+          defaultValue={this.state.checkAction}
+          className={styles.inputElements}
+          onChange={this.handleCheckActionChange} value={this.state.checkAction}
+        >
+          {checkActions.map(option => (
+            <Option key={option}>{option}</Option>
+          ))}
+        </Select>
+
+        <div>
+          {this.state.propertyInput.map(inputPlaceHolder => (
+            <Input className={styles.inputElements} placeholder={inputPlaceHolder}/>
+          ))}
+        </div>
       </Modal>
     </div>;
   }

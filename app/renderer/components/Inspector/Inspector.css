@@ -194,6 +194,11 @@
     margin-bottom: 20px;
 }
 
+.inputElements {
+    width: 185;
+    display: inline-block;
+}
+
 .selected-element-card {
     display: flex;
     flex-direction: column;
@@ -252,6 +257,24 @@
 }
 
 .locator-test-interactions-container .send-keys-container button {
+    position: absolute;
+    right: 0;
+    width: 25%;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.locator-test-interactions-container .check-container {
+    width: 100%;
+}
+
+.locator-test-interactions-container .check-container input {
+    width: 76%;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.locator-test-interactions-container .check-container button {
     position: absolute;
     right: 0;
     width: 25%;

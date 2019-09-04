@@ -60,6 +60,10 @@ main().catch(console.log);
     return `await ${this.getVarName(varName, varIndex)}.sendKeys(${JSON.stringify(text)});`;
   }
 
+  codeFor_check (varName, varIndex, text) {
+    return `await ${this.getVarName(varName, varIndex)}.check(${JSON.stringify(text)});`;
+  }
+
   codeFor_back () {
     return `await driver.back();`;
   }

@@ -58,6 +58,10 @@ main().catch(console.log);
     return `await gondola.enter("${glocator}",${JSON.stringify(text)})`;
   }
 
+  codeFor_check (varName, varIndex, text) {
+    return `await gondola.check("${glocator}",${JSON.stringify(text)})`;
+  }
+
   codeFor_back () {
     return `await gondola.back();`;
   }

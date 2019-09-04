@@ -87,6 +87,10 @@ ${this.indent(code, 4)}
     return `Input Text    ${this.lastID}    ${text}`;
   }
 
+  codeFor_check (varName, varIndex, text) {
+    return `Check    ${this.lastID}    ${text}`;
+  }
+
   codeFor_back () {
     return `Go Back`;
   }

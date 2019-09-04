@@ -72,6 +72,10 @@ ${this.indent(this.chainifyCode(code), 2)}
     return `${this.getVarName(varName, varIndex)}.setValue(${JSON.stringify(text)});`;
   }
 
+  codeFor_check (varName, varIndex, text) {
+    return `${this.getVarName(varName, varIndex)}.check(${JSON.stringify(text)});`;
+  }
+
   codeFor_back () {
     return `driver.back();`;
   }

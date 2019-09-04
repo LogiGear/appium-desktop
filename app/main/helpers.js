@@ -7,10 +7,10 @@ const isDev = process.env.NODE_ENV === 'development';
 
 export function openBrowserWindow (route, opts) {
   const defaultOpts = {
-    width: 1080,
-    minWidth: 1080,
-    height: 570,
-    minHeight: 570,
+    width: 2000,
+    minWidth: 2000,
+    height: 1000,
+    minHeight: 1000,
     backgroundColor: '#f2f2f2',
     frame: 'customButtonsOnHover',
     webPreferences: {

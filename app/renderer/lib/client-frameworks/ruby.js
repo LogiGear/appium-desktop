@@ -64,6 +64,10 @@ driver.quit`;
     return `${this.getVarName(varName, varIndex)}.send_keys ${JSON.stringify(text)}`;
   }
 
+  codeFor_check (varName, varIndex, text) {
+    return `${this.getVarName(varName, varIndex)}.check ${JSON.stringify(text)}`;
+  }
+
   codeFor_back () {
     return `driver.back`;
   }
