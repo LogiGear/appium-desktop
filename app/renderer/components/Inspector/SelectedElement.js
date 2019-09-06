@@ -38,7 +38,7 @@ class SelectedElement extends Component {
   handleCheck () {
     const {propertyName, propertyValue, generateCheckMethod, hideCheckModal, selectedElement} = this.props;
     const {xpath} = selectedElement;
-    generateCheckMethod({methodName: this.state.checkMethodName, strategy: 'xpath', selector: xpath, variableName: 'el1', isArray: false, propertyName: propertyName, propertyValue: propertyValue});
+    generateCheckMethod({methodName: this.state.checkMethodName, strategy: 'xpath', selector: xpath, variableName: 'el1', isArray: false, name: propertyName, value: propertyValue});
     hideCheckModal();
   }
 
@@ -65,8 +65,6 @@ class SelectedElement extends Component {
       applyClientMethod,
       setFieldValue,
       sendKeys,
-      propertyName,
-      propertyValue,
       selectedElement,
       sendKeysModalVisible,
       showSendKeysModal,
@@ -238,9 +236,10 @@ class SelectedElement extends Component {
 
         <div>
           {this.state.propertyInput.map(inputPlaceHolder => (
-            <Input className={styles.inputElements} 
-            placeholder={inputPlaceHolder}
-            onChange={(e) => setFieldValue(inputPlaceHolder, e.target.value)}/>
+            <Input className={styles.inputElements}
+              placeholder={inputPlaceHolder}
+              onChange={(e) => setFieldValue(inputPlaceHolder, e.target.value)}
+            />
           ))}
         </div>
       </Modal>

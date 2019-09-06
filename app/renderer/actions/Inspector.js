@@ -347,20 +347,20 @@ export function generateCheckMethod (params) {
                       params.methodName !== 'source' &&
                       getState().inspector.isRecording;
 
-    const {variableIndex, strategy, selector, variableName, isArray, propertyName, propertyValue} = params;
+    const {variableIndex, strategy, selector, variableName, isArray, name, value} = params;
     if (isRecording) {
       // Add 'findAndAssign' line of code. Don't do it for arrays though. Arrays already have 'find' expression
       if (strategy && selector && !variableIndex && variableIndex !== 0) {
-        findAndAssign(strategy, selector, variableName, isArray)(dispatch, getState);
+        await findAndAssign(strategy, selector, variableName, isArray)(dispatch, getState);
       }
 
       // now record the actual action
-      let args = [variableName, variableIndex, propertyName, propertyValue];
+      let args = [variableName, variableIndex, name, value];
       args = args.concat(params.args || []);
       dispatch({type: RECORD_ACTION, action: params.methodName, params: args });
     }
     dispatch({type: METHOD_CALL_DONE});
-  }
+  };
 }
 
 /**

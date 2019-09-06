@@ -58,12 +58,12 @@ main().catch(console.log);
     return `await gondola.enter("${glocator}",${JSON.stringify(text)})`;
   }
 
-  codeFor_checkControlExist (varName, varIndex) {
+  codeFor_checkControlExist () {
     return `await gondola.checkControlExist('${glocator}');`;
   }
 
-  codeFor_checkControlProperty (varName, varIndex, propertyName, propertyValue) {
-    return `await gondola.checkControlProperty('${glocator}', '${propertyName}', '${propertyValue}');`;
+  codeFor_checkControlProperty (varName, varIndex, name, value) {
+    return `await gondola.checkControlProperty('${glocator}', '${name}', '${value}');`;
   }
 
   codeFor_back () {
