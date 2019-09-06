@@ -341,6 +341,28 @@ export function unselectHoveredElement (path) {
   };
 }
 
+export function generateCheckMethod (params) {
+  return async (dispatch, getState) => {
+    const isRecording = params.methodName !== 'quit' &&
+                      params.methodName !== 'source' &&
+                      getState().inspector.isRecording;
+
+    const {variableIndex, strategy, selector, variableName, isArray, propertyName, propertyValue} = params;
+    if (isRecording) {
+      // Add 'findAndAssign' line of code. Don't do it for arrays though. Arrays already have 'find' expression
+      if (strategy && selector && !variableIndex && variableIndex !== 0) {
+        findAndAssign(strategy, selector, variableName, isArray)(dispatch, getState);
+      }
+
+      // now record the actual action
+      let args = [variableName, variableIndex, propertyName, propertyValue];
+      args = args.concat(params.args || []);
+      dispatch({type: RECORD_ACTION, action: params.methodName, params: args });
+    }
+    dispatch({type: METHOD_CALL_DONE});
+  }
+}
+
 /**
  * Requests a method call on appium
  */

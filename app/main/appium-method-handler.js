@@ -120,10 +120,13 @@ export default class AppiumMethodHandler {
     if (elementId) {
       // Give the cached element a variable name (el1, el2, el3,...) the first time it's used
       cachedEl = this.elementCache[elementId];
-      if (!cachedEl.variableName && cachedEl.variableType === 'string') {
+      let szVariableName = cachedEl.variableName;
+      let szVariableType = cachedEl.variableType;
+      if (!szVariableName && szVariableType === 'string') {
         cachedEl.variableName = `el${this.elVariableCounter++}`;
       }
-      res = await cachedEl.el[methodName].apply(cachedEl.el, args);
+      let ele = cachedEl.el[methodName];
+      res = await ele.apply(cachedEl.el, args);
     } else {
       // Specially handle the tap and swipe method
       if (methodName === SCREENSHOT_INTERACTION_MODE.TAP) {

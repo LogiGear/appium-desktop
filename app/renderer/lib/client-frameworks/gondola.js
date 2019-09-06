@@ -30,9 +30,9 @@ main().catch(console.log);
 
   codeFor_findAndAssign (strategy, locator) {
     switch (strategy) {
+      case 'accessibility id': locator = `~${locator}`; break;
       case 'id': locator = `${locator}`; break;
       case 'xpath': break; // xpath does not need to be updated
-      case 'accessibility id': locator = `~${locator}`; break;
       case 'name': locator = `name=${locator}`; break;
       case 'class name': locator = `${locator}`; break;
       case '-android uiautomator': locator = `android=${locator}`; break;
@@ -58,8 +58,12 @@ main().catch(console.log);
     return `await gondola.enter("${glocator}",${JSON.stringify(text)})`;
   }
 
-  codeFor_check (varName, varIndex, text) {
-    return `await gondola.check("${glocator}",${JSON.stringify(text)})`;
+  codeFor_checkControlExist (varName, varIndex) {
+    return `await gondola.checkControlExist('${glocator}');`;
+  }
+
+  codeFor_checkControlProperty (varName, varIndex, propertyName, propertyValue) {
+    return `await gondola.checkControlProperty('${glocator}', '${propertyName}', '${propertyValue}');`;
   }
 
   codeFor_back () {

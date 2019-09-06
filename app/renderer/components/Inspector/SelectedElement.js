@@ -8,8 +8,8 @@ import { clipboard } from 'electron';
 
 const ButtonGroup = Button.Group;
 const checkActions = ['Check Control Exist', 'Check Control Property'];
-const propertyName = 'Property Name';
-const propertyValue = 'Property Value';
+const propertyNamePlaceHolder = 'propertyName';
+const propertyValuePlaceHolder = 'propertyValue';
 /**
  * Shows details of the currently selected element and shows methods that can
  * be called on the elements (tap, sendKeys)
@@ -24,6 +24,8 @@ class SelectedElement extends Component {
     this.state = {
       checkAction: checkActions[0],
       propertyInput: [],
+      selector: '',
+      checkMethodName: 'checkControlExist',
     };
   }
 
@@ -34,8 +36,9 @@ class SelectedElement extends Component {
   }
 
   handleCheck () {
-    const {check, applyClientMethod, hideCheckModal, selectedElementId: elementId} = this.props;
-    applyClientMethod({methodName: 'check', elementId, args: [check]});
+    const {propertyName, propertyValue, generateCheckMethod, hideCheckModal, selectedElement} = this.props;
+    const {xpath} = selectedElement;
+    generateCheckMethod({methodName: this.state.checkMethodName, strategy: 'xpath', selector: xpath, variableName: 'el1', isArray: false, propertyName: propertyName, propertyValue: propertyValue});
     hideCheckModal();
   }
 
@@ -46,11 +49,13 @@ class SelectedElement extends Component {
 
     if (this.state.checkAction === checkActions[0]) {
       this.setState({
-        propertyInput: [propertyName, propertyValue],
+        propertyInput: [propertyNamePlaceHolder, propertyValuePlaceHolder],
+        checkMethodName: 'checkControlProperty',
       });
     } else {
       this.setState({
         propertyInput: [],
+        checkMethodName: 'checkControlExist',
       });
     }
   }
@@ -60,6 +65,8 @@ class SelectedElement extends Component {
       applyClientMethod,
       setFieldValue,
       sendKeys,
+      propertyName,
+      propertyValue,
       selectedElement,
       sendKeysModalVisible,
       showSendKeysModal,
@@ -217,7 +224,7 @@ class SelectedElement extends Component {
         okText={t('Check')}
         cancelText={t('Cancel')}
         onCancel={hideCheckModal}
-        onOk={() => applyClientMethod({methodName: 'check', elementId})}
+        onOk={this.handleCheck}
       >
         <Select
           defaultValue={this.state.checkAction}
@@ -231,7 +238,9 @@ class SelectedElement extends Component {
 
         <div>
           {this.state.propertyInput.map(inputPlaceHolder => (
-            <Input className={styles.inputElements} placeholder={inputPlaceHolder}/>
+            <Input className={styles.inputElements} 
+            placeholder={inputPlaceHolder}
+            onChange={(e) => setFieldValue(inputPlaceHolder, e.target.value)}/>
           ))}
         </div>
       </Modal>

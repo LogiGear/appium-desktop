@@ -34,11 +34,11 @@ class ElementLocator extends Component {
     } = this.props;
 
     const locatorStrategies = [
+      ['accessibility id', 'Accessibility ID'],
       ['id', 'Id'],
       ['xpath', 'XPath'],
       ['name', 'Name'],
       ['class name', 'Class Name'],
-      ['accessibility id', 'Accessibility ID'],
       ['-android uiautomator', 'UIAutomator Selector (Android UiAutomator2)'],
       ['-android datamatcher', 'DataMatcher Selector (Android Espresso)'],
       ['-ios predicate string', 'Predicate String (iOS)'],
