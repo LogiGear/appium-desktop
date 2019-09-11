@@ -124,9 +124,8 @@ export default class Inspector extends Component {
     
   }
 
-  switchDesiredCapabilities ()  {
-    const {hideDesiredCapsModal} = this.props;
-    hideDesiredCapsModal(); 
+  getCurrentCapabilities () {
+    
     let path = WORKSPACE + "/" + this.state.selectedCaps;
     const jsonObj = require(path);
 
@@ -144,9 +143,18 @@ export default class Inspector extends Component {
       item.value = value;
       desiredCaps.push(item);
     }
+
+    return desiredCaps;
+  }
+
+  switchDesiredCapabilities ()  {
+    const {hideDesiredCapsModal} = this.props;
+    hideDesiredCapsModal(); 
+    
     ipcRenderer.removeAllListeners('appium-client-command-response');
     ipcRenderer.removeAllListeners('appium-client-command-response-error');
 
+    let desiredCaps = this.getCurrentCapabilities ();
     this.props.initializeSession(desiredCaps);
     ipcRenderer.once('appium-new-session-ready', () => {
       this.props.bindAppium();
