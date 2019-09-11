@@ -97,9 +97,9 @@ export default class Inspector extends Component {
       window.resizeTo(newWidth, newHeight);
     }
     this.didInitialResize = true;
-    this.props.bindAppium();
-    this.props.applyClientMethod({methodName: 'source'});
-    this.props.getSavedActionFramework();
+    //this.props.bindAppium();
+    //this.props.applyClientMethod({methodName: 'source'});
+    //this.props.getSavedActionFramework();
     window.addEventListener('resize', this.updateSourceTreeWidth);
   }
 

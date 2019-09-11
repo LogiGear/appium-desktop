@@ -234,13 +234,13 @@ export function bindAppium () {
       unbindClient();
       dispatch({type: QUIT_SESSION_DONE});
       //dispatch(push('/session'));
-      if (!killedByUser) {
-        notification.error({
-          message: 'Error',
-          description: reason || i18n.t('Session has been terminated'),
-          duration: 0
-        });
-      }
+      // if (!killedByUser) {
+      //   notification.error({
+      //     message: 'Error',
+      //     description: reason || i18n.t('Session has been terminated'),
+      //     duration: 0
+      //   });
+      // }
     });
   };
 }
