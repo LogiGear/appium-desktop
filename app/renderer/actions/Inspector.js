@@ -29,6 +29,9 @@ export const HIDE_SEND_KEYS_MODAL = 'HIDE_SEND_KEYS_MODAL';
 export const SHOW_CHECK_MODAL = 'SHOW_CHECK_MODAL';
 export const HIDE_CHECK_MODAL = 'HIDE_CHECK_MODAL';
 
+export const SHOW_DESIRED_CAPS_MODAL = 'SHOW_DESIRED_CAPS_MODAL';
+export const HIDE_DESIRED_CAPS_MODAL = 'HIDE_DESIRED_CAPS_MODAL';
+
 export const QUIT_SESSION_REQUESTED = 'QUIT_SESSION_REQUESTED';
 export const QUIT_SESSION_DONE = 'QUIT_SESSION_DONE';
 
@@ -141,42 +144,10 @@ function xmlToJSON (source) {
   return recursive(sourceXML);
 }
 
-export function initializeSession () {
+export function initializeSession (capabilities) {
   return (dispatch, getState) => {
-    // Listen for session response messages from 'main'
-    let caps = [];
-    let platform = {};
-    let device = {};
-    let automation = {};
-    let appPackage = {};
-    let appActivity = {};
-    platform.name = 'platformName';
-    platform.type = 'text';
-    platform.value = 'Android';
-    caps.push(platform);
-
-    device.name = 'deviceName';
-    device.type = 'text';
-    device.value = 'emulator-5554';
-    caps.push(device);
-
-    automation.name = 'automationName';
-    automation.type = 'text';
-    automation.value = 'UiAutomator2';
-    caps.push(automation);
-
-    appPackage.name = 'appPackage';
-    appPackage.type = 'text';
-    appPackage.value = 'com.android.settings';
-    caps.push(appPackage);
-
-    appActivity.name = 'appActivity';
-    appActivity.type = 'text';
-    appActivity.value = 'Settings';
-    caps.push(appActivity);
-
-    dispatch({type: NEW_SESSION_REQUESTED, caps});
-    let desiredCapabilities = caps ? getCapsObject(caps) : null;
+    dispatch({type: NEW_SESSION_REQUESTED, capabilities});
+    let desiredCapabilities = capabilities ? getCapsObject(capabilities) : null;
     let attachSessId = null;
     let session = getState().session;
     let host, port, username, accessKey, https, path;
@@ -429,6 +400,18 @@ export function hideSendKeysModal () {
   };
 }
 
+export function showDesiredCapsModal () {
+  return (dispatch) => {
+    dispatch({type: SHOW_DESIRED_CAPS_MODAL});
+  };
+}
+
+export function hideDesiredCapsModal () {
+  return (dispatch) => {
+    dispatch({type: HIDE_DESIRED_CAPS_MODAL});
+  };
+}
+
 export function showCheckModal () {
   return (dispatch) => {
     dispatch({type: SHOW_CHECK_MODAL});
@@ -636,6 +619,10 @@ export function keepSessionAlive () {
     dispatch({type: HIDE_PROMPT_KEEP_ALIVE});
     ipcRenderer.send('appium-keep-session-alive');
   };
+}
+
+export function switchDesiredCaps () {
+
 }
 
 export function selectActionGroup (group) {

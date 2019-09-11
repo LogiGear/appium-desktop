@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 import { debounce } from 'lodash';
 import { SCREENSHOT_INTERACTION_MODE, INTERACTION_MODE } from './shared';
-import { Card, Icon, Button, Spin, Tooltip, Modal, Tabs } from 'antd';
+import { Card, Icon, Button, Spin, Tooltip, Modal, Tabs, Select } from 'antd';
 import Screenshot from './Screenshot';
 import SelectedElement from './SelectedElement';
 import Source from './Source';
 import InspectorStyles from './Inspector.css';
 import RecordedActions from './RecordedActions';
 import Actions from './Actions';
-import { clipboard } from 'electron';
+import { clipboard, ipcRenderer } from 'electron';
+import fs from 'fs';
 
 const {SELECT, SWIPE, TAP} = SCREENSHOT_INTERACTION_MODE;
 
@@ -20,12 +21,32 @@ const MIN_WIDTH = 2000;
 const MIN_HEIGHT = 1000;
 const MAX_SCREENSHOT_WIDTH = 500;
 
+const WORKSPACE = process.env.WORKSPACE || "";
+
 export default class Inspector extends Component {
 
   constructor () {
     super();
+    this.desiredCapabilities = [];
+
+    var files = fs.readdirSync(WORKSPACE);
+    for (var i=0; i<files.length; i++) {
+        let file = files[i];
+        if(file.endsWith(".json")) {
+          let path = WORKSPACE + "/" + file;
+          var data = fs.readFileSync(path);
+          if( data.indexOf("desiredCapabilities") >= 0 ){
+            this.desiredCapabilities.push(file);
+          }
+        }
+    }
+
     this.didInitialResize = false;
-    this.state = {};
+    this.switchDesiredCapabilities = this.switchDesiredCapabilities.bind(this);
+    this.handleChangeDesiredCapabilities = this.handleChangeDesiredCapabilities.bind(this);
+    this.state = {
+      selectedCaps: this.desiredCapabilities[0],
+    };
     this.screenAndSourceEl = null;
     this.lastScreenshot = null;
     this.updateSourceTreeWidth = debounce(this.updateSourceTreeWidth.bind(this), 50);
@@ -62,7 +83,7 @@ export default class Inspector extends Component {
   }
 
   componentWillMount () {
-    this.props.initializeSession();
+    //this.props.initializeSession();
   }
 
   componentDidMount () {
@@ -98,10 +119,47 @@ export default class Inspector extends Component {
     selectScreenshotInteractionMode(mode);
   }
 
+  handleChangeDesiredCapabilities ( value ) {
+    this.state.selectedCaps = value;
+    
+  }
+
+  switchDesiredCapabilities ()  {
+    const {hideDesiredCapsModal} = this.props;
+    hideDesiredCapsModal(); 
+    let path = WORKSPACE + "/" + this.state.selectedCaps;
+    const jsonObj = require(path);
+
+    let caps = jsonObj.helpers.Appium.desiredCapabilities;
+    let keys = Object.keys(caps);
+    let values = Object.values(caps);
+
+    let desiredCaps = [];
+    for (var i=0; i<keys.length; i++) {
+      let item = {};
+      let key = keys[i];
+      let value = values[i];
+      item.name = key;
+      item.type = 'text';
+      item.value = value;
+      desiredCaps.push(item);
+    }
+    ipcRenderer.removeAllListeners('appium-client-command-response');
+    ipcRenderer.removeAllListeners('appium-client-command-response-error');
+
+    this.props.initializeSession(desiredCaps);
+    ipcRenderer.once('appium-new-session-ready', () => {
+      this.props.bindAppium();
+      this.props.applyClientMethod({methodName: 'source'});
+      this.props.getSavedActionFramework();
+    });
+  }
+
   render () {
     const {screenshot, screenshotError, selectedElement = {},
            applyClientMethod, quitSession, isRecording, showRecord, startRecording,
            pauseRecording, showLocatorTestModal,
+           desiredCapsModalVisible, showDesiredCapsModal, hideDesiredCapsModal,
            screenshotInteractionMode,
            selectedInteractionMode, selectInteractionMode,
            showKeepAlivePrompt, keepSessionAlive, sourceXML, t} = this.props;
@@ -169,6 +227,11 @@ export default class Inspector extends Component {
             type={screenshotInteractionMode === TAP ? 'primary' : 'default'}
           />
         </Tooltip>
+        <Tooltip title={t('Switch desiredCapabilities')}>
+          <Button icon='scan' onClick={() => showDesiredCapsModal()}
+            type={screenshotInteractionMode === TAP ? 'primary' : 'default'}
+          />
+        </Tooltip>
       </ButtonGroup>
     </div>;
 
@@ -215,6 +278,22 @@ export default class Inspector extends Component {
         cancelText={t('Quit Session')}
       >
         <p>{t('Your session is about to expire')}</p>
+      </Modal>
+      <Modal title={t('Choose desired capabilities')}
+        visible={desiredCapsModalVisible}
+        okText={t('Switch')}
+        cancelText={t('Cancel')}
+        onCancel={hideDesiredCapsModal}
+        onOk={this.switchDesiredCapabilities}
+      >
+        <Select
+          defaultValue={this.state.selectedCaps}
+          onChange={this.handleChangeDesiredCapabilities}
+        >
+          {this.desiredCapabilities.map(option => (
+            <Option key={option}>{option}</Option>
+          ))}
+        </Select>
       </Modal>
     </div>;
   }

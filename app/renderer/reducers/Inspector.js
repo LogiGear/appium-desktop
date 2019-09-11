@@ -12,7 +12,7 @@ import { SET_SOURCE_AND_SCREENSHOT, QUIT_SESSION_REQUESTED, QUIT_SESSION_DONE,
          SET_SWIPE_START, SET_SWIPE_END, CLEAR_SWIPE_ACTION, SET_SEARCHED_FOR_ELEMENT_BOUNDS, CLEAR_SEARCHED_FOR_ELEMENT_BOUNDS,
          PROMPT_KEEP_ALIVE, HIDE_PROMPT_KEEP_ALIVE,
          SELECT_ACTION_GROUP, SELECT_SUB_ACTION_GROUP,
-         SELECT_INTERACTION_MODE, ENTERING_ACTION_ARGS, SET_ACTION_ARG, REMOVE_ACTION, SHOW_CHECK_MODAL, HIDE_CHECK_MODAL
+         SELECT_INTERACTION_MODE, ENTERING_ACTION_ARGS, SET_ACTION_ARG, REMOVE_ACTION, SHOW_CHECK_MODAL, HIDE_CHECK_MODAL, SHOW_DESIRED_CAPS_MODAL, HIDE_DESIRED_CAPS_MODAL
 } from '../actions/Inspector';
 import { SCREENSHOT_INTERACTION_MODE, INTERACTION_MODE } from '../components/Inspector/shared';
 
@@ -162,6 +162,21 @@ export default function inspector (state = INITIAL_STATE, action) {
         action: {
           ...state.action,
           sendKeys: null,
+        }
+      };
+
+    case SHOW_DESIRED_CAPS_MODAL:
+      return {
+        ...state,
+        desiredCapsModalVisible: true
+      };
+
+    case HIDE_DESIRED_CAPS_MODAL:
+      return {
+        ...state,
+        desiredCapsModalVisible: false,
+        action: {
+          ...state.action,
         }
       };
 
