@@ -46,6 +46,8 @@ export default class Inspector extends Component {
     this.handleChangeDesiredCapabilities = this.handleChangeDesiredCapabilities.bind(this);
     this.state = {
       selectedCaps: this.desiredCapabilities[0],
+      modelTitle: 'Choose Desired Capabilities',
+      confirmLoading: false,
     };
     this.screenAndSourceEl = null;
     this.lastScreenshot = null;
@@ -149,7 +151,11 @@ export default class Inspector extends Component {
 
   switchDesiredCapabilities ()  {
     const {hideDesiredCapsModal} = this.props;
-    hideDesiredCapsModal(); 
+    //hideDesiredCapsModal(); 
+    this.setState({
+      modelTitle: 'Switching Desired Capabilities',
+      confirmLoading: true,
+    });
     
     ipcRenderer.removeAllListeners('appium-client-command-response');
     ipcRenderer.removeAllListeners('appium-client-command-response-error');
@@ -157,6 +163,11 @@ export default class Inspector extends Component {
     let desiredCaps = this.getCurrentCapabilities ();
     this.props.initializeSession(desiredCaps);
     ipcRenderer.once('appium-new-session-ready', () => {
+      this.setState({
+        modelTitle: 'Choose Desired Capabilities',
+        confirmLoading: false,
+      });
+      hideDesiredCapsModal(); 
       this.props.bindAppium();
       this.props.applyClientMethod({methodName: 'source'});
       this.props.getSavedActionFramework();
@@ -287,8 +298,9 @@ export default class Inspector extends Component {
       >
         <p>{t('Your session is about to expire')}</p>
       </Modal>
-      <Modal title={t('Choose desired capabilities')}
+      <Modal title={t(this.state.modelTitle)}
         visible={desiredCapsModalVisible}
+        confirmLoading={this.state.confirmLoading}
         okText={t('Switch')}
         cancelText={t('Cancel')}
         onCancel={hideDesiredCapsModal}
