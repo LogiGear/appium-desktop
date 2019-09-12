@@ -46,7 +46,8 @@ export default class Inspector extends Component {
     this.handleChangeDesiredCapabilities = this.handleChangeDesiredCapabilities.bind(this);
     this.state = {
       selectedCaps: this.desiredCapabilities[0],
-      modelTitle: 'Choose Desired Capabilities',
+      modalTitle: 'Choose Desired Capabilities',
+      modalOkCaption: 'Switch',
       confirmLoading: false,
     };
     this.screenAndSourceEl = null;
@@ -153,7 +154,8 @@ export default class Inspector extends Component {
     const {hideDesiredCapsModal} = this.props;
     //hideDesiredCapsModal(); 
     this.setState({
-      modelTitle: 'Switching Desired Capabilities',
+      modalTitle: 'Switching Desired Capabilities',
+      modalOkCaption: 'Switching',
       confirmLoading: true,
     });
     
@@ -164,13 +166,14 @@ export default class Inspector extends Component {
     this.props.initializeSession(desiredCaps);
     ipcRenderer.once('appium-new-session-ready', () => {
       this.setState({
-        modelTitle: 'Choose Desired Capabilities',
+        modalTitle: 'Choose Desired Capabilities',
+        modalOkCaption: 'Switch',
         confirmLoading: false,
       });
-      hideDesiredCapsModal(); 
       this.props.bindAppium();
       this.props.applyClientMethod({methodName: 'source'});
       this.props.getSavedActionFramework();
+      hideDesiredCapsModal(); 
     });
   }
 
@@ -298,10 +301,10 @@ export default class Inspector extends Component {
       >
         <p>{t('Your session is about to expire')}</p>
       </Modal>
-      <Modal title={t(this.state.modelTitle)}
+      <Modal title={t(this.state.modalTitle)}
         visible={desiredCapsModalVisible}
         confirmLoading={this.state.confirmLoading}
-        okText={t('Switch')}
+        okText={t(this.state.modalOkCaption)}
         cancelText={t('Cancel')}
         onCancel={hideDesiredCapsModal}
         onOk={this.switchDesiredCapabilities}
