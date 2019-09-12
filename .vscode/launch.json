@@ -14,7 +14,8 @@
         "env": {
           "RUNNING_LOCALLY": "true",
           "FORCE_NO_WRONG_FOLDER": "true",
-          "NODE_ENV": "development"
+          "NODE_ENV": "development",
+          "WORKSPACE": "/Users/test/Desktop/gondola/first_test"
         },
         "args": ["--inspect", "."]
       },

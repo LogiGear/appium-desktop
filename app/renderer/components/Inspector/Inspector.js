@@ -152,7 +152,7 @@ export default class Inspector extends Component {
 
   switchDesiredCapabilities ()  {
     const {hideDesiredCapsModal} = this.props;
-    //hideDesiredCapsModal(); 
+    hideDesiredCapsModal(); 
     this.setState({
       modalTitle: 'Switching Desired Capabilities',
       modalOkCaption: 'Switching',
@@ -173,7 +173,6 @@ export default class Inspector extends Component {
       this.props.bindAppium();
       this.props.applyClientMethod({methodName: 'source'});
       this.props.getSavedActionFramework();
-      hideDesiredCapsModal(); 
     });
   }
 
@@ -314,7 +313,7 @@ export default class Inspector extends Component {
           onChange={this.handleChangeDesiredCapabilities}
         >
           {this.desiredCapabilities.map(option => (
-            <Option key={option}>{option}</Option>
+            <Select.Option key={option}>{option}</Select.Option>
           ))}
         </Select>
       </Modal>
