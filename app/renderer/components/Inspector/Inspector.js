@@ -236,7 +236,7 @@ export default class Inspector extends Component {
           />
         </Tooltip>
         <Tooltip title={t('Switch desiredCapabilities')}>
-          <Button icon='scan' onClick={() => showDesiredCapsModal()}
+          <Button icon='switcher' onClick={() => showDesiredCapsModal()}
             type={screenshotInteractionMode === TAP ? 'primary' : 'default'}
           />
         </Tooltip>

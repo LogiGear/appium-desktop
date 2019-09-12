@@ -8,8 +8,12 @@ import { clipboard } from 'electron';
 
 const ButtonGroup = Button.Group;
 const checkActions = ['Check Control Exist', 'Check Control Property'];
-const propertyNamePlaceHolder = 'propertyName';
-const propertyValuePlaceHolder = 'propertyValue';
+const propertyName = 'propertyName';
+const propertyValue = 'propertyValue';
+const propertyNamePlaceHolder = 'Property Name';
+const propertyValuePlaceHolder = 'Property Value';
+const modalWidthCheckControlExist = '520px';
+const modalWidthCheckControlProperty = '700px';
 /**
  * Shows details of the currently selected element and shows methods that can
  * be called on the elements (tap, sendKeys)
@@ -23,10 +27,17 @@ class SelectedElement extends Component {
     this.handleCheckActionChange = this.handleCheckActionChange.bind(this);
     this.state = {
       checkAction: checkActions[0],
-      propertyInput: [],
+      propertiesPlaceHolder: [],
+      properties: {},
       selector: '',
       checkMethodName: 'checkControlExist',
+      widths: {},
+      width: '520px',
     };
+    this.state.properties[propertyNamePlaceHolder] = propertyName;
+    this.state.properties[propertyValuePlaceHolder] = propertyValue;
+    this.state.widths[checkActions[0]] = modalWidthCheckControlExist;
+    this.state.widths[checkActions[1]] = modalWidthCheckControlProperty;
   }
 
   handleSendKeys () {
@@ -44,17 +55,18 @@ class SelectedElement extends Component {
 
   handleCheckActionChange (value) {
     this.setState({
-      checkAction: value
+      checkAction: value,
+      width: this.state.widths[value],
     });
 
     if (this.state.checkAction === checkActions[0]) {
       this.setState({
-        propertyInput: [propertyNamePlaceHolder, propertyValuePlaceHolder],
+        propertiesPlaceHolder: [propertyNamePlaceHolder, propertyValuePlaceHolder],
         checkMethodName: 'checkControlProperty',
       });
     } else {
       this.setState({
-        propertyInput: [],
+        propertiesPlaceHolder: [],
         checkMethodName: 'checkControlExist',
       });
     }
@@ -223,25 +235,28 @@ class SelectedElement extends Component {
         cancelText={t('Cancel')}
         onCancel={hideCheckModal}
         onOk={this.handleCheck}
+        width={this.state.width}
       >
-        <Select
-          defaultValue={this.state.checkAction}
-          className={styles.inputElements}
-          onChange={this.handleCheckActionChange} value={this.state.checkAction}
-        >
-          {checkActions.map(option => (
-            <Option key={option}>{option}</Option>
+        <Row>
+          <Col xs={{ span: 5, offset: 1 }} lg={{ span: 6, offset: 2 }}>
+            <Select
+              defaultValue={this.state.checkAction}
+              onChange={this.handleCheckActionChange}
+            >
+              {checkActions.map(option => (
+                <Select.Option key={option}>{option}</Select.Option>
+              ))}
+            </Select>
+          </Col>
+          {this.state.propertiesPlaceHolder.map(placeHolder => (
+            <Col xs={{ span: 5, offset: 1 }} lg={{ span: 6, offset: 2 }}>
+              <Input
+                placeholder={placeHolder}
+                onChange={(e) => setFieldValue(this.state.properties[placeHolder], e.target.value)}
+              />
+          </Col>
           ))}
-        </Select>
-
-        <div>
-          {this.state.propertyInput.map(inputPlaceHolder => (
-            <Input className={styles.inputElements}
-              placeholder={inputPlaceHolder}
-              onChange={(e) => setFieldValue(inputPlaceHolder, e.target.value)}
-            />
-          ))}
-        </div>
+        </Row>
       </Modal>
     </div>;
   }
