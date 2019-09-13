@@ -49,6 +49,8 @@ export default class Inspector extends Component {
       modalTitle: 'Choose Desired Capabilities',
       modalOkCaption: 'Switch',
       confirmLoading: false,
+      showSpinning: true,
+      spinningTip: 'Choose session please ...',
     };
     this.screenAndSourceEl = null;
     this.lastScreenshot = null;
@@ -86,7 +88,7 @@ export default class Inspector extends Component {
   }
 
   componentWillMount () {
-    //this.props.initializeSession();
+
   }
 
   componentDidMount () {
@@ -157,10 +159,9 @@ export default class Inspector extends Component {
       modalTitle: 'Switching Desired Capabilities',
       modalOkCaption: 'Switching',
       confirmLoading: true,
+      showSpinning: true,
+      spinningTip: 'Initializing session...',
     });
-    
-    ipcRenderer.removeAllListeners('appium-client-command-response');
-    ipcRenderer.removeAllListeners('appium-client-command-response-error');
 
     let desiredCaps = this.getCurrentCapabilities ();
     this.props.initializeSession(desiredCaps);
@@ -169,10 +170,20 @@ export default class Inspector extends Component {
         modalTitle: 'Choose Desired Capabilities',
         modalOkCaption: 'Switch',
         confirmLoading: false,
+        showSpinning: true,
+        spinningTip: 'Taking screenshot...',
       });
       this.props.bindAppium();
       this.props.applyClientMethod({methodName: 'source'});
       this.props.getSavedActionFramework();
+    });
+    ipcRenderer.once('appium-client-command-response-source-done', () => {
+      this.setState({
+        modalTitle: 'Choose Desired Capabilities',
+        modalOkCaption: 'Switch',
+        confirmLoading: false,
+        showSpinning: false,
+      });
     });
   }
 
@@ -191,7 +202,7 @@ export default class Inspector extends Component {
         {screenshot && <Screenshot {...this.props} />}
         {screenshotError && t('couldNotObtainScreenshot', {screenshotError})}
         {!screenshot && !screenshotError &&
-          <Spin size="large" spinning={true}>
+          <Spin tip={this.state.spinningTip} size="large" spinning={this.state.showSpinning}>
             <div className={InspectorStyles.screenshotBox} />
           </Spin>
         }

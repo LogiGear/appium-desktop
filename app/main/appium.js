@@ -12,6 +12,7 @@ import {createSession, killSession, getSessionHandler} from './appium-method-han
 import request from 'request-promise';
 import { checkNewUpdates } from './auto-updater';
 import { openBrowserWindow, setSavedEnv } from './helpers';
+import { method } from 'bluebird-lst';
 
 const LOG_SEND_INTERVAL_MS = 250;
 
@@ -306,6 +307,7 @@ function connectClientMethodListener () {
           }
         }
 
+        renderer.send('appium-client-command-response-' + methodName + '-done', null);
         renderer.send('appium-client-command-response', {
           ...res,
           methodName,
