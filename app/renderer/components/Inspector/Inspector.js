@@ -50,7 +50,7 @@ export default class Inspector extends Component {
       modalOkCaption: 'Switch',
       confirmLoading: false,
       showSpinning: true,
-      spinningTip: 'Choose session please ...',
+      spinningTip: 'Choose desired capabilities please.',
     };
     this.screenAndSourceEl = null;
     this.lastScreenshot = null;
